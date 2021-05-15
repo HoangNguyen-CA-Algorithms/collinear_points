@@ -8,8 +8,9 @@
  *
  ******************************************************************************/
 
-import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
+
+import java.util.Comparator;
 
 public class Point implements Comparable<Point> {
 
@@ -59,7 +60,12 @@ public class Point implements Comparable<Point> {
      * @return the slope between this point and the specified point
      */
     public double slopeTo(Point that) {
-        /* YOUR CODE HERE */
+        double denominator = that.x-this.x;
+
+        if (denominator == 0) return Double.POSITIVE_INFINITY; // vertical slope
+        if (this.compareTo(that) == 0) return Double.NEGATIVE_INFINITY; // degenerate point
+
+        return (that.y-this.y)/denominator;
     }
 
     /**
@@ -75,7 +81,11 @@ public class Point implements Comparable<Point> {
      *         argument point
      */
     public int compareTo(Point that) {
-        /* YOUR CODE HERE */
+        if (this.y - that.y == 0){
+            return this.x-that.x;
+        }else{
+            return this.y-that.y;
+        }
     }
 
     /**
@@ -85,7 +95,19 @@ public class Point implements Comparable<Point> {
      * @return the Comparator that defines this ordering on points
      */
     public Comparator<Point> slopeOrder() {
-        /* YOUR CODE HERE */
+        return new CompareBySlope();
+    }
+
+    private class CompareBySlope implements Comparator<Point>{
+
+        public int compare(Point o1, Point o2) {
+            double slope1 = Point.this.slopeTo(o1);
+            double slope2 = Point.this.slopeTo(o2);
+
+            if (slope1 < slope2) return -1;
+            else if (slope1 > slope2 ) return 1;
+            return 0;
+        }
     }
 
 
@@ -105,6 +127,13 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
+        Point p1 = new Point(12,654);
+        Point p2 = new Point(23,2);
+        p1.draw();
+        p2.draw();
+        p1.drawTo(p2);
+
+        StdDraw.show();
+        System.out.println(p1);
     }
 }
