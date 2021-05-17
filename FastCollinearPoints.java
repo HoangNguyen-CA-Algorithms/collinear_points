@@ -5,16 +5,16 @@ public class FastCollinearPoints {
     private LineSegment[] segments;
     private int size;
     public FastCollinearPoints(Point[] points) {
-        if (points == null) throw new IllegalArgumentException();
+        checkPoints(points);
+
         segments = new LineSegment[points.length * points.length];
         size = 0;
 
 
-        Point[] slopePoints = new Point[points.length];
+        Point[] slopePoints;
 
         for (int i = 0; i < points.length; i++ ) {
             Point p = points[i];
-            if (p == null) throw new IllegalArgumentException();
 
             slopePoints = Arrays.copyOf(points, points.length);
             Arrays.sort(slopePoints, p.slopeOrder());
@@ -40,9 +40,24 @@ public class FastCollinearPoints {
                 }
             }
         }
-
-
     }
+
+    private void checkPoints(Point[] points) {
+        if (points == null) throw new IllegalArgumentException();
+
+        for (Point p: points) {
+            if (p == null) throw new IllegalArgumentException();
+        }
+
+        for (int i =0; i < points.length; i++ ) {
+            for (int j =i+1; j < points.length; j++) {
+                if (points[i].compareTo(points[j]) == 0) {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+    }
+
     public int numberOfSegments() {
         return this.size;
     }

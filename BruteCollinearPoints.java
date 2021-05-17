@@ -14,20 +14,21 @@ public class BruteCollinearPoints {
 
     // finds all line segments containing 4
     public BruteCollinearPoints(Point[] points) {
-        if (points == null) throw new IllegalArgumentException();
-        segments = new LineSegment[points.length];
+        checkPoints(points);
 
-        Arrays.sort(points);
+        segments = new LineSegment[points.length * points.length];
 
-        for (int i = 0; i < points.length; i++) {
-            for (int j = i+1; j < points.length; j++) {
-                for (int k = j+1; k < points.length; k++) {
-                    for (int l = k+1; l < points.length; l++) {
-                        Point p1 = points[i];
-                        Point p2 = points[j];
-                        Point p3 = points[k];
-                        Point p4 = points[l];
-                        if (p1 == null || p2 == null || p3 == null|| p4 == null) throw new IllegalArgumentException();
+        Point[] pointsCopy = Arrays.copyOf(points, points.length);
+        Arrays.sort(pointsCopy);
+
+        for (int i = 0; i < pointsCopy.length; i++) {
+            for (int j = i+1; j < pointsCopy.length; j++) {
+                for (int k = j+1; k < pointsCopy.length; k++) {
+                    for (int l = k+1; l < pointsCopy.length; l++) {
+                        Point p1 = pointsCopy[i];
+                        Point p2 = pointsCopy[j];
+                        Point p3 = pointsCopy[k];
+                        Point p4 = pointsCopy[l];
 
                         double slope1 = p1.slopeTo(p2);
                         double slope2 = p2.slopeTo(p3);
@@ -59,11 +60,29 @@ public class BruteCollinearPoints {
             temp[i] = segments[i];
         }
         return temp;
+
+    }
+
+    private void checkPoints(Point[] points) {
+        if (points == null) throw new IllegalArgumentException();
+
+        for (Point p: points) {
+            if (p == null) throw new IllegalArgumentException();
+        }
+
+        for (int i =0; i < points.length; i++ ) {
+            for (int j =i+1; j < points.length; j++) {
+                if (points[i].compareTo(points[j]) == 0) {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
     }
 
 
-
     public static void main(String[] args) {
-
+        Point temp = new Point(1,1);
+        Point[] p = {temp, temp, temp, null};
+        BruteCollinearPoints b = new BruteCollinearPoints(p);
     }
 }

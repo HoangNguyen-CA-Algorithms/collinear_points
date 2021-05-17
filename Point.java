@@ -65,7 +65,9 @@ public class Point implements Comparable<Point> {
         if (this.compareTo(that) == 0) return Double.NEGATIVE_INFINITY; // degenerate point
         if (denominator == 0) return Double.POSITIVE_INFINITY; // vertical slope
 
-        return (that.y-this.y)/denominator;
+        double numerator = (that.y-this.y);
+        if (numerator == 0) return 0.0;
+        return numerator/denominator;
     }
 
     /**
@@ -99,15 +101,13 @@ public class Point implements Comparable<Point> {
     }
 
     private class CompareBySlope implements Comparator<Point> {
-        Point p;
+        private Point p;
         public CompareBySlope(Point p) {
             super();
             this.p = p;
         }
 
         public int compare(Point o1, Point o2) {
-            if (o1 == null || o2 == null) throw new RuntimeException("WOW");
-            if (p == null) throw new UnsupportedOperationException();
             double slope1 = p.slopeTo(o1);
             double slope2 = p.slopeTo(o2);
 
@@ -134,11 +134,9 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        Point p1 = new Point(12,654);
-        Point p2 = new Point(23,2);
-        p1.draw();
-        p2.draw();
-        p1.drawTo(p2);
+        Point p1 = new Point(315, 455);
+        Point p2 = new Point(189, 455);
+        System.out.println(p1.slopeTo(p2));
 
         StdDraw.show();
         System.out.println(p1);
