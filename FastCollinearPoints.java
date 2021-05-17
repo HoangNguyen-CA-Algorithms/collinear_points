@@ -1,9 +1,12 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+
 
 public class FastCollinearPoints {
 
     private LineSegment[] segments;
     private int size;
+
     public FastCollinearPoints(Point[] points) {
         checkPoints(points);
 
@@ -11,46 +14,73 @@ public class FastCollinearPoints {
         size = 0;
 
 
+        Point[] pointsCopy = Arrays.copyOf(points, points.length);
+        Point[] endingPointCheck = Arrays.copyOf(points, points.length);
+
+        Arrays.sort(pointsCopy);
+
         Point[] slopePoints;
+        ArrayList<Point> currentList = new ArrayList<>();
 
-        for (int i = 0; i < points.length; i++ ) {
-            Point p = points[i];
 
-            slopePoints = Arrays.copyOf(points, points.length);
+        for (int i = 0; i < pointsCopy.length; i++) {
+            Point p = pointsCopy[i];
+
+            slopePoints = Arrays.copyOfRange(pointsCopy, i, pointsCopy.length);
             Arrays.sort(slopePoints, p.slopeOrder());
 
-
-            for (int j1 = 0,j2 = 1, j3 = 2; j3 < slopePoints.length; j1++, j2++, j3++) {
-
-                Point p1 = slopePoints[j1];
-                Point p2 = slopePoints[j2];
-                Point p3 = slopePoints[j3];
-
-                double slope1 = p1.slopeTo(p);
-                double slope2 = p2.slopeTo(p);
-                double slope3 = p3.slopeTo(p);
+            currentList.clear();
+            currentList.add(p);
+            currentList.add(slopePoints[0]);
 
 
-                if (slope1 == Double.NEGATIVE_INFINITY || slope2 == Double.NEGATIVE_INFINITY || slope3 == Double.NEGATIVE_INFINITY) continue;
+            int count = 2; // counts p and slopePoints[0]
+            double prevSlope = slopePoints[0].slopeTo(p);
+            for (int j = 1; j < slopePoints.length; j++) {
+                Point currPoint = slopePoints[j];
+                double currSlope = currPoint.slopeTo(p);
 
-
-                if (slope1 == slope2 && slope2 == slope3) {
-                    LineSegment segment = new LineSegment(p, p3);
-                    segments[size++] = segment;
+                if (currSlope == prevSlope) {
+                    currentList.add(currPoint);
+                    count++;
                 }
+                else {
+                    if (count >= 4 && p.compareTo(currentList.get(0)) < 0) {
+                        Point[] temp = new Point[currentList.size()];
+                        temp = currentList.toArray(temp);
+                        Arrays.sort(temp);
+
+                        LineSegment s = new LineSegment(temp[0], temp[temp.length - 1]);
+                        segments[size++] = s;
+                    }
+                    currentList.clear();
+                    currentList.add(p);
+                    currentList.add(currPoint);
+                    count = 2;
+                }
+                prevSlope = currSlope;
+            }
+            if (count >= 4) {
+                Point[] temp = new Point[currentList.size()];
+                temp = currentList.toArray(temp);
+                Arrays.sort(temp);
+
+                LineSegment s = new LineSegment(temp[0], temp[temp.length - 1]);
+                segments[size++] = s;
             }
         }
     }
 
+
     private void checkPoints(Point[] points) {
         if (points == null) throw new IllegalArgumentException();
 
-        for (Point p: points) {
+        for (Point p : points) {
             if (p == null) throw new IllegalArgumentException();
         }
 
-        for (int i =0; i < points.length; i++ ) {
-            for (int j =i+1; j < points.length; j++) {
+        for (int i = 0; i < points.length; i++) {
+            for (int j = i + 1; j < points.length; j++) {
                 if (points[i].compareTo(points[j]) == 0) {
                     throw new IllegalArgumentException();
                 }

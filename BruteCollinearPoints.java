@@ -22,9 +22,9 @@ public class BruteCollinearPoints {
         Arrays.sort(pointsCopy);
 
         for (int i = 0; i < pointsCopy.length; i++) {
-            for (int j = i+1; j < pointsCopy.length; j++) {
-                for (int k = j+1; k < pointsCopy.length; k++) {
-                    for (int l = k+1; l < pointsCopy.length; l++) {
+            for (int j = i + 1; j < pointsCopy.length; j++) {
+                for (int k = j + 1; k < pointsCopy.length; k++) {
+                    for (int l = k + 1; l < pointsCopy.length; l++) {
                         Point p1 = pointsCopy[i];
                         Point p2 = pointsCopy[j];
                         Point p3 = pointsCopy[k];
@@ -45,8 +45,6 @@ public class BruteCollinearPoints {
     }
 
 
-
-
     // the number of line segments
     public int numberOfSegments() {
         return size;
@@ -56,7 +54,7 @@ public class BruteCollinearPoints {
     // the line segments
     public LineSegment[] segments() {
         LineSegment[] temp = new LineSegment[size];
-        for (int i =0; i < size;i++) {
+        for (int i = 0; i < size; i++) {
             temp[i] = segments[i];
         }
         return temp;
@@ -66,12 +64,12 @@ public class BruteCollinearPoints {
     private void checkPoints(Point[] points) {
         if (points == null) throw new IllegalArgumentException();
 
-        for (Point p: points) {
+        for (Point p : points) {
             if (p == null) throw new IllegalArgumentException();
         }
 
-        for (int i =0; i < points.length; i++ ) {
-            for (int j =i+1; j < points.length; j++) {
+        for (int i = 0; i < points.length; i++) {
+            for (int j = i + 1; j < points.length; j++) {
                 if (points[i].compareTo(points[j]) == 0) {
                     throw new IllegalArgumentException();
                 }
@@ -81,8 +79,8 @@ public class BruteCollinearPoints {
 
 
     public static void main(String[] args) {
-        Point temp = new Point(1,1);
-        Point[] p = {temp, temp, temp, null};
+        Point temp = new Point(1, 1);
+        Point[] p = { temp, temp, temp, null };
         BruteCollinearPoints b = new BruteCollinearPoints(p);
     }
 }
