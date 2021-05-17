@@ -5,22 +5,40 @@ public class FastCollinearPoints {
     private LineSegment[] segments;
     private int size;
     public FastCollinearPoints(Point[] points) {
-        segments = new LineSegment[points.length];
+        if (points == null) throw new IllegalArgumentException();
+        segments = new LineSegment[points.length * points.length];
         size = 0;
 
 
-        double[] slopes = new double[points.length];
+        Point[] slopePoints = new Point[points.length];
 
         for (int i = 0; i < points.length; i++ ) {
             Point p = points[i];
+            if (p == null) throw new IllegalArgumentException();
 
-            for (int j = 0; j < points.length; j++){
-                Point q = points[q];
-                double slope = p.slopeTo(q);
-                slopes[j] = slope;
+            slopePoints = Arrays.copyOf(points, points.length);
+            Arrays.sort(slopePoints, p.slopeOrder());
+
+
+            for (int j1 = 0,j2 = 1, j3 = 2; j3 < slopePoints.length; j1++, j2++, j3++) {
+
+                Point p1 = slopePoints[j1];
+                Point p2 = slopePoints[j2];
+                Point p3 = slopePoints[j3];
+
+                double slope1 = p1.slopeTo(p);
+                double slope2 = p2.slopeTo(p);
+                double slope3 = p3.slopeTo(p);
+
+
+                if (slope1 == Double.NEGATIVE_INFINITY || slope2 == Double.NEGATIVE_INFINITY || slope3 == Double.NEGATIVE_INFINITY) continue;
+
+
+                if (slope1 == slope2 && slope2 == slope3) {
+                    LineSegment segment = new LineSegment(p, p3);
+                    segments[size++] = segment;
+                }
             }
-
-            Arrays.sort(slopes);
         }
 
 

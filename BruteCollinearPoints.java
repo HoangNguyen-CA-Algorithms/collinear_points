@@ -14,6 +14,7 @@ public class BruteCollinearPoints {
 
     // finds all line segments containing 4
     public BruteCollinearPoints(Point[] points) {
+        if (points == null) throw new IllegalArgumentException();
         segments = new LineSegment[points.length];
 
         Arrays.sort(points);
@@ -26,6 +27,7 @@ public class BruteCollinearPoints {
                         Point p2 = points[j];
                         Point p3 = points[k];
                         Point p4 = points[l];
+                        if (p1 == null || p2 == null || p3 == null|| p4 == null) throw new IllegalArgumentException();
 
                         double slope1 = p1.slopeTo(p2);
                         double slope2 = p2.slopeTo(p3);
@@ -33,13 +35,8 @@ public class BruteCollinearPoints {
 
                         if (slope1 == slope2 && slope2 == slope3) {
                             LineSegment seg = new LineSegment(p1, p4);
-
-
                             segments[size++] = seg;
-
-
                         }
-
                     }
                 }
             }

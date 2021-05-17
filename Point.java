@@ -62,8 +62,8 @@ public class Point implements Comparable<Point> {
     public double slopeTo(Point that) {
         double denominator = that.x-this.x;
 
-        if (denominator == 0) return Double.POSITIVE_INFINITY; // vertical slope
         if (this.compareTo(that) == 0) return Double.NEGATIVE_INFINITY; // degenerate point
+        if (denominator == 0) return Double.POSITIVE_INFINITY; // vertical slope
 
         return (that.y-this.y)/denominator;
     }
@@ -95,14 +95,21 @@ public class Point implements Comparable<Point> {
      * @return the Comparator that defines this ordering on points
      */
     public Comparator<Point> slopeOrder() {
-        return new CompareBySlope();
+        return new CompareBySlope(this);
     }
 
-    private class CompareBySlope implements Comparator<Point>{
+    private class CompareBySlope implements Comparator<Point> {
+        Point p;
+        public CompareBySlope(Point p) {
+            super();
+            this.p = p;
+        }
 
         public int compare(Point o1, Point o2) {
-            double slope1 = Point.this.slopeTo(o1);
-            double slope2 = Point.this.slopeTo(o2);
+            if (o1 == null || o2 == null) throw new RuntimeException("WOW");
+            if (p == null) throw new UnsupportedOperationException();
+            double slope1 = p.slopeTo(o1);
+            double slope2 = p.slopeTo(o2);
 
             if (slope1 < slope2) return -1;
             else if (slope1 > slope2 ) return 1;
