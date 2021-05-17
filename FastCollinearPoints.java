@@ -15,57 +15,52 @@ public class FastCollinearPoints {
 
 
         Point[] pointsCopy = Arrays.copyOf(points, points.length);
-        Point[] endingPointCheck = Arrays.copyOf(points, points.length);
-
-        Arrays.sort(pointsCopy);
-
-        Point[] slopePoints;
         ArrayList<Point> currentList = new ArrayList<>();
 
 
         for (int i = 0; i < pointsCopy.length; i++) {
+            Arrays.sort(pointsCopy);
             Point p = pointsCopy[i];
+            Arrays.sort(pointsCopy,p.slopeOrder());
 
-            slopePoints = Arrays.copyOfRange(pointsCopy, i, pointsCopy.length);
-            Arrays.sort(slopePoints, p.slopeOrder());
 
             currentList.clear();
-            currentList.add(p);
-            currentList.add(slopePoints[0]);
+            currentList.add(pointsCopy[0]);
 
-
-            int count = 2; // counts p and slopePoints[0]
-            double prevSlope = slopePoints[0].slopeTo(p);
-            for (int j = 1; j < slopePoints.length; j++) {
-                Point currPoint = slopePoints[j];
+            int count = 1;
+            double prevSlope = pointsCopy[0].slopeTo(p);
+            for (int j = 1; j < pointsCopy.length; j++) {
+                Point currPoint = pointsCopy[j];
                 double currSlope = currPoint.slopeTo(p);
 
                 if (currSlope == prevSlope) {
                     currentList.add(currPoint);
                     count++;
                 }
+
                 else {
-                    if (count >= 4 && p.compareTo(currentList.get(0)) < 0) {
+                    if (count >= 3 && p.compareTo(currentList.get(0)) < 0) {
                         Point[] temp = new Point[currentList.size()];
                         temp = currentList.toArray(temp);
                         Arrays.sort(temp);
 
-                        LineSegment s = new LineSegment(temp[0], temp[temp.length - 1]);
+                        LineSegment s = new LineSegment(p, temp[temp.length - 1]);
                         segments[size++] = s;
                     }
                     currentList.clear();
-                    currentList.add(p);
                     currentList.add(currPoint);
-                    count = 2;
+                    count = 1;
                 }
                 prevSlope = currSlope;
             }
-            if (count >= 4) {
+
+            if (count >= 3 && p.compareTo(currentList.get(0)) < 0) {
+
                 Point[] temp = new Point[currentList.size()];
                 temp = currentList.toArray(temp);
                 Arrays.sort(temp);
 
-                LineSegment s = new LineSegment(temp[0], temp[temp.length - 1]);
+                LineSegment s = new LineSegment(p, temp[temp.length - 1]);
                 segments[size++] = s;
             }
         }
